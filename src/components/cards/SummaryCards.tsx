@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowUpRight, ArrowDownRight, Wallet, X } from 'lucide-react';
 import { useFinanceStore } from '../../store/useFinanceStore';
 import { calculateSummary, formatCurrency } from '../../utils/calculations';
+import { toast } from 'sonner';
 
 const NumberTicker = ({ value }: { value: number }) => {
   const [displayValue, setDisplayValue] = React.useState(0);
@@ -56,17 +57,31 @@ export const SummaryCards = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const val = parseFloat(amount);
-    if (!isNaN(val) && val > 0) {
-      addTransaction({
-        id: Date.now().toString(),
-        date: new Date().toISOString(),
-        amount: val,
-        category: modalState.type === 'income' ? 'Deposit' : 'Transfer',
-        type: modalState.type
-      });
-      setModalState({ ...modalState, isOpen: false });
-      setAmount('');
+    
+    if (isNaN(val) || val <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
     }
+
+    // Check for insufficient balance when sending money
+    if (modalState.type === 'expense' && val > balance) {
+      toast.error('Insufficient balance to complete this transaction!', {
+        description: `Current balance: ${formatCurrency(balance)}`
+      });
+      return;
+    }
+
+    addTransaction({
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      amount: val,
+      category: modalState.type === 'income' ? 'Deposit' : 'Transfer',
+      type: modalState.type
+    });
+
+    toast.success(modalState.type === 'income' ? 'Money added successfully!' : 'Money sent successfully!');
+    setModalState({ ...modalState, isOpen: false });
+    setAmount('');
   };
 
   return (
@@ -191,4 +206,3 @@ export const SummaryCards = () => {
     </section>
   );
 };
-

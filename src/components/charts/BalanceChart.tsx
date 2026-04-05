@@ -8,8 +8,6 @@ export const BalanceChart = () => {
   const transactions = useFinanceStore(state => state.transactions);
   
   const chartData = React.useMemo(() => {
-    // Create cumulative balance data points
-    let currentBalance = 0;
     const sorted = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     
     if (sorted.length === 0) {
@@ -22,15 +20,52 @@ export const BalanceChart = () => {
       ];
     }
 
-    return sorted.map((t) => {
+    const firstDate = new Date(sorted[0].date);
+    const lastDate = new Date(sorted[sorted.length - 1].date);
+    const diffDays = Math.ceil(Math.abs(lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    let currentBalance = 0;
+
+    // 1. Single Day Mode: Show time-based trend (HH:MM)
+    if (diffDays <= 1 && firstDate.toDateString() === lastDate.toDateString()) {
+      return sorted.map((t) => {
+        if (t.type === 'income') currentBalance += t.amount;
+        else currentBalance -= t.amount;
+        
+        return {
+          name: new Date(t.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+          balance: currentBalance,
+          timestamp: new Date(t.date).getTime()
+        };
+      });
+    }
+
+    // 2. Multi-day grouping logic
+    const groupedData: { [key: string]: number } = {};
+    
+    sorted.forEach(t => {
       if (t.type === 'income') currentBalance += t.amount;
       else currentBalance -= t.amount;
       
-      return {
-        name: new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        balance: currentBalance,
-      };
+      let key = '';
+      const d = new Date(t.date);
+      
+      if (diffDays <= 15) {
+        // Group by Day (e.g., "Apr 5")
+        key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      } else if (diffDays <= 60) {
+        // Group by Week (e.g., "W1 Apr")
+        const weekNum = Math.ceil(d.getDate() / 7);
+        key = `W${weekNum} ${d.toLocaleDateString('en-US', { month: 'short' })}`;
+      } else {
+        // Group by Month (e.g., "April")
+        key = d.toLocaleDateString('en-US', { month: 'long' });
+      }
+      
+      groupedData[key] = currentBalance;
     });
+
+    return Object.entries(groupedData).map(([name, balance]) => ({ name, balance }));
   }, [transactions]);
 
   return (

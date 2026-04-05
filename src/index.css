@@ -375,9 +375,10 @@ button {
 
 .primary-btn {
   background: var(--accent-color);
-  color: #fff;
+  color: #0b0c10;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
+  font-weight: 700;
 }
 
 .action-buttons .primary-btn { width: auto; }
@@ -394,6 +395,33 @@ button {
 
 .secondary-btn:hover {
   background: var(--btn-secondary-hover);
+}
+
+.error-btn {
+  background: var(--error-color);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(247, 85, 144, 0.2);
+  width: 100%;
+}
+
+.error-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(247, 85, 144, 0.3);
+}
+
+.success-btn {
+  background: var(--success-color);
+  color: #0b0c10;
+  box-shadow: 0 4px 15px rgba(76, 217, 100, 0.2);
+  width: 100%;
+  font-weight: 700;
+}
+
+.success-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 217, 100, 0.3);
 }
 
 .stats-grid {

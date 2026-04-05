@@ -4,28 +4,37 @@ FinDash is a high-performance, glassmorphic financial dashboard built for modern
 
 ## 🚀 Live Evaluation & Key Features
 
-### 1. Design & Creativity
+### 1. 📈 Dynamic Analytics Intelligence
+- **Intelligent Time-Scaling**: The Balance Trend chart automatically adapts its granularity based on your data range:
+  - **Single Day Mode**: Hourly tracking (HH:mm) for high-frequency day traders/users.
+  - **Mid-range (1-15 days)**: Standard Daily view for week-over-week trends.
+  - **Growth Mode (15-60 days)**: Weekly aggregation to maintain a clean, smooth trend line.
+  - **Long-term (60+ days)**: Monthly summaries for bird's-eye financial planning.
+- **Theme-Aware Data Visualization**: Customized Recharts with premium gradients, theme-synced tooltips, and localized currency formatting.
+
+### 2. 🛡️ Smart Fund Protection & UX
+- **Insufficient Balance Logic**: Pro-active validation on both Quick Action modals and the Transaction Table prevents adding expenses that exceed the total available balance.
+- **Premium Notification System**: Integrated **`sonner`** for high-performance, glassmorphic toast notifications. Includes success/error feedback with detailed sub-text descriptions.
+- **Polished Controls**: Refined "Add Money" and "Send Money" modals with distinct, energetic color-coded "Confirm" buttons (`primary` vs `error`) and interactive depth-shadows.
+
+### 3. 🎨 Design & Aesthetics
 - **Glassmorphism Design System**: Built with modern CSS design tokens using semi-transparent containers, backdrop filters, and subtle border glows.
 - **Micro-Animations**: Features a **Pulse Number Ticker** for financial totals and **Staggered Entry** animations for a cinematic dashboard load experience.
 - **Dynamic Themes**: Hand-crafted Light and Dark modes that morph smoothly using persistent state.
 
-### 2. Responsiveness
-- **Mobile-Adaptive Layout**: Fully responsive sidebar, summary cards, and chart containers.
-- **Single-Line Pagination**: Custom pagination logic that stays in one line on mobile while sacrificing no usability.
-- **Unified Controls**: Responsive search and filter bar that adapts from a 3-column desktop view to a mobile-stacked view intelligently.
-
-### 3. Functionality & RBAC
+### 4. ⚙️ Functionality & RBAC
 - **Role-Based Access Control (RBAC)**: Supports "Admin" and "Viewer" roles.
   - **Admin**: Full access to add/send money and delete historical transactions.
   - **Viewer**: Read-only view with restricted action buttons and hidden administration columns.
 - **Dynamic Calculations**: Instant balance, income, and expense tracking with Indian Rupee (INR) localization.
-- **Quick-Action Modals**: Custom-built glassmorphic modals for adding funds with immediate state updates.
+- **Unified Controls**: Responsive search and filter bar that adapts from a 3-column desktop view to a mobile-stacked view intelligently.
 
-### 4. Technical Quality
-- **Tech Stack**: React 18, Vite, TypeScript, Lucide Icons, Recharts.
-- **State Management**: Orchestrated via **Zustand** with persistent storage to `localStorage`, ensuring a seamless experience across browser refreshes.
-- **Modular Structure**: Logic is separated into pure utility functions (`calculations.ts`), visual components, and a centralized store.
-- **Performance Optimized**: Leverages `useMemo` for heavy data filtering/sorting and Zustand selectors to minimize re-renders.
+## 🛠️ Tech Stack
+- **Library**: React 18, Vite, TypeScript.
+- **Icons & UI**: Lucide Icons, Sonner (Toasts).
+- **Visualization**: Recharts (Customized).
+- **State**: **Zustand** with persistent storage to `localStorage`.
+- **Styling**: Modern CSS Design Tokens with Utility Logic.
 
 ## 🛠️ Setup Instructions
 
@@ -58,5 +67,5 @@ We used **Zustand** for its lightweight footprint and high performance. The stor
 
 ## 🎯 Attention to Detail
 - **INR Formatting**: Numbers follow the Indian numbering system (e.g., 1,00,000).
-- **Chart Polish**: Customized Recharts tooltips with theme-aware colors and localized currency symbols.
 - **Edge Case Handling**: Empty states for graphs and tables ensure the UI looks polished even with zero data.
+- **Mobile-Adaptive Layout**: Fully responsive sidebar, summary cards, and chart containers that reorganize based on screen size.

@@ -1,30 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useFinanceStore, Transaction } from '../../store/useFinanceStore';
-import { formatCurrency } from '../../utils/calculations';
+import { useFinanceStore } from '../../store/useFinanceStore';
+import { calculateSummary, formatCurrency } from '../../utils/calculations';
 import { Trash2, Plus, Search, Filter, ChevronDown, Check, Download } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const TransactionTable = () => {
   const transactions = useFinanceStore(state => state.transactions);
   const role = useFinanceStore(state => state.role);
   const deleteTransaction = useFinanceStore(state => state.deleteTransaction);
   const addTransaction = useFinanceStore(state => state.addTransaction);
+  
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
-        setIsFilterOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // ... (Other state and filtering logic)
+  const { balance } = React.useMemo(() => calculateSummary(transactions), [transactions]);
 
   // States for Add Modal
   const [isAdding, setIsAdding] = useState(false);
@@ -37,6 +28,17 @@ export const TransactionTable = () => {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const filtered = React.useMemo(() => {
     return transactions.filter(t => {
@@ -58,16 +60,30 @@ export const TransactionTable = () => {
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTxn.amount || !newTxn.category) return;
+    const amountVal = parseFloat(newTxn.amount);
+    
+    if (isNaN(amountVal) || amountVal <= 0 || !newTxn.category) {
+      toast.error('Please enter a valid amount and category');
+      return;
+    }
+
+    // Check for insufficient balance when adding expense
+    if (newTxn.type === 'expense' && amountVal > balance) {
+      toast.error('Insufficient balance to complete this transaction!', {
+        description: `Current balance: ${formatCurrency(balance)}`
+      });
+      return;
+    }
 
     addTransaction({
       id: Date.now().toString(),
       date: new Date().toISOString(),
-      amount: parseFloat(newTxn.amount),
+      amount: amountVal,
       category: newTxn.category,
       type: newTxn.type
     });
 
+    toast.success('Transaction added successfully!');
     setIsAdding(false);
     setNewTxn({ amount: '', category: '', type: 'expense' });
   };
