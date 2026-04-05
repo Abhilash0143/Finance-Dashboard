@@ -159,8 +159,8 @@ h1, h2, h3, h4 {
 }
 
 .table-control-item:not(:first-child) {
-   flex: 1; /* Filter and Add Button get less space */
-   max-width: 200px;
+   flex: 1; 
+   min-width: 140px;
 }
 
 .success-text {

@@ -12,7 +12,9 @@ interface FinanceStore {
   transactions: Transaction[];
   role: string;
   theme: string;
+  monthlyBudget: number;
   setRole: (role: string) => void;
+  setMonthlyBudget: (amount: number) => void;
   toggleTheme: () => void;
   addTransaction: (txn: Transaction) => void;
   deleteTransaction: (id: string | number) => void;
@@ -27,8 +29,14 @@ export const useFinanceStore = create<FinanceStore>((set, get) => ({
   transactions: getInitialTransactions(),
   role: "admin",
   theme: localStorage.getItem("theme") || "dark",
+  monthlyBudget: Number(localStorage.getItem("monthlyBudget")) || 10000,
 
   setRole: (role) => set({ role }),
+  
+  setMonthlyBudget: (monthlyBudget) => {
+    localStorage.setItem("monthlyBudget", monthlyBudget.toString());
+    set({ monthlyBudget });
+  },
 
   toggleTheme: () => {
     const newTheme = get().theme === "dark" ? "light" : "dark";

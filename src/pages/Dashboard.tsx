@@ -8,12 +8,35 @@ import { useFinanceStore } from '../store/useFinanceStore';
 
 export const Dashboard = () => {
   const transactions = useFinanceStore(state => state.transactions);
+  const monthlyBudget = useFinanceStore(state => state.monthlyBudget);
 
   const highestSpending = React.useMemo(() => {
     const expenses = transactions.filter(t => t.type === 'expense');
     if (expenses.length === 0) return 'N/A';
     return [...expenses].sort((a, b) => b.amount - a.amount)[0].category;
   }, [transactions]);
+
+  const budgetStatus = React.useMemo(() => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    const monthlyExpenses = transactions
+      .filter(t => {
+        const d = new Date(t.date);
+        return t.type === 'expense' && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const isOver = monthlyExpenses > monthlyBudget;
+    const remaining = monthlyBudget - monthlyExpenses;
+
+    return {
+      isOver,
+      remaining,
+      monthlyExpenses
+    };
+  }, [transactions, monthlyBudget]);
 
   return (
     <>
@@ -61,13 +84,16 @@ export const Dashboard = () => {
           
           <div className="rounded-xl border flex flex-col justify-center transition-transform hover:-translate-y-1" style={{ padding: 'var(--panel-padding-sm)', backgroundColor: 'var(--input-bg)', borderColor: 'var(--input-border)' }}>
             <div className="flex items-center gap-2 mb-3">
-              <div className="p-2 rounded-lg bg-[rgba(76,217,100,0.1)]">
-                <ShieldCheck className="w-4 h-4 text-[#4cd964]" />
+              <div className={`p-2 rounded-lg ${budgetStatus.isOver ? 'bg-[rgba(247,85,144,0.1)]' : 'bg-[rgba(76,217,100,0.1)]'}`}>
+                <ShieldCheck className={`w-4 h-4 ${budgetStatus.isOver ? 'text-[#f75590]' : 'text-[#4cd964]'}`} />
               </div>
               <h4 className="text-[#8b929a] text-sm font-medium">Budget Status</h4>
             </div>
-            <p className="text-sm font-bold text-[#4cd964] leading-relaxed">
-              You are currently under budget for this month. Keep it up!
+            <p className={`text-sm font-bold leading-relaxed ${budgetStatus.isOver ? 'text-[#f75590]' : 'text-[#4cd964]'}`}>
+              {budgetStatus.isOver 
+                ? `You have exceeded your budget by ₹${(Math.abs(budgetStatus.remaining)).toLocaleString('en-IN')}` 
+                : `You are under budget by ₹${budgetStatus.remaining.toLocaleString('en-IN')}. Keep it up!`
+              }
             </p>
           </div>
         </div>

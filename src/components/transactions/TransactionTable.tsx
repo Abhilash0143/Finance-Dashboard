@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useFinanceStore, Transaction } from '../../store/useFinanceStore';
 import { formatCurrency } from '../../utils/calculations';
-import { Trash2, Plus, Search, Filter, ChevronDown, Check } from 'lucide-react';
+import { Trash2, Plus, Search, Filter, ChevronDown, Check, Download } from 'lucide-react';
 
 export const TransactionTable = () => {
   const transactions = useFinanceStore(state => state.transactions);
@@ -72,6 +72,31 @@ export const TransactionTable = () => {
     setNewTxn({ amount: '', category: '', type: 'expense' });
   };
 
+  const downloadCSV = () => {
+    const headers = ['Date', 'Category', 'Amount', 'Type'];
+    const rows = filtered.map(t => [
+      new Date(t.date).toLocaleDateString(),
+      t.category,
+      t.amount,
+      t.type
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transactions_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const filterOptions = [
     { label: 'All Types', value: 'all' },
     { label: 'Income', value: 'income' },
@@ -125,11 +150,23 @@ export const TransactionTable = () => {
             )}
           </div>
 
+          <div className="table-control-item" style={{ minWidth: 'min-content' }}>
+            <button
+              onClick={downloadCSV}
+              className="secondary-btn flex items-center justify-center gap-2 p-0 px-4 transition-transform hover:scale-105"
+              style={{ height: '54px', borderRadius: '12px', borderColor: 'var(--panel-border)', width: '100%' }}
+              title="Download CSV"
+            >
+              <Download size={20} style={{ stroke: 'var(--accent-color)' }} />
+              <span className="text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>CSV</span>
+            </button>
+          </div>
+
           {role === 'admin' && (
-            <div className="table-control-item">
+            <div className="table-control-item" style={{ flex: '2', minWidth: '180px' }}>
               <button
                 onClick={() => setIsAdding(true)}
-                className="primary-btn flex items-center justify-center gap-2 h-full py-0"
+                className="primary-btn flex items-center justify-center gap-2 h-full py-0 w-full"
                 style={{ height: '54px' }}
               >
                 <Plus className="w-4 h-4" /> Add Transaction
