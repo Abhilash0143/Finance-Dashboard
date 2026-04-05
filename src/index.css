@@ -410,6 +410,21 @@ button {
   box-shadow: 0 6px 20px rgba(247, 85, 144, 0.3);
 }
 
+.send-btn {
+  background: rgba(247, 85, 144, 0.1);
+  color: #f75590;
+  border: 1px solid rgba(247, 85, 144, 0.2);
+  box-shadow: 0 4px 15px rgba(247, 85, 144, 0.05);
+}
+
+.send-btn:hover {
+  background: #f75590;
+  color: #0b0c10;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(247, 85, 144, 0.2);
+  font-weight: 700;
+}
+
 .success-btn {
   background: var(--success-color);
   color: #0b0c10;

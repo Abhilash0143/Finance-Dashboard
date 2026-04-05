@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUpRight, ArrowDownRight, Wallet, X } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet, X, Send } from 'lucide-react';
 import { useFinanceStore } from '../../store/useFinanceStore';
 import { calculateSummary, formatCurrency } from '../../utils/calculations';
 import { toast } from 'sonner';
@@ -109,10 +109,10 @@ export const SummaryCards = () => {
                 <Wallet className="w-4 h-4" /> Add Money
               </button>
               <button 
-                className="secondary-btn flex items-center gap-2"
+                className="send-btn flex items-center gap-2"
                 onClick={() => setModalState({ isOpen: true, type: 'expense' })}
               >
-                Send Money
+                <Send className="w-4 h-4" /> Send Money
               </button>
             </>
           )}
