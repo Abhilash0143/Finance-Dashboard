@@ -3,6 +3,7 @@ import { Layout } from './components/ui/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Transactions } from './pages/Transactions';
 import { Toaster } from 'sonner';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="transactions" element={<Transactions />} />
         </Route>
       </Routes>
+      <Analytics />
     </Router>
   );
 }
